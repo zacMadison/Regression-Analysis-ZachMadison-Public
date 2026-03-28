@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-
 # this program has a large amount of redundancy (especially around nan) but seems  to function for everything I need it to.
 
 
@@ -15,21 +14,25 @@ def main():
     for i in dataset[0]:
         selection.append(i)
 
+    running = 1
+    while running == 1:
+        print("Options to select from: " + str(selection))
+        x = input("Please select which stat you want for the x-axis: ")
+        y = input("Please select which stat you want for the y-axis: ")
+        m, B = regression(x, y, dataset)
+        graph_regression(x, y, dataset, m, B)
+        plt.savefig("./output/output.png")
+        if input("If you would to exit, press q. Otherwise press enter\n") == "q":
+            running = 0
 
-    print("Options to select from: " + str(selection))
-    x = input("Please select which stat you want for the x-axis: ")
-    y = input("Please select which stat you want for the y-axis: ")
-    m, B = regression(x, y, dataset)
-    graph_regression(x, y, dataset, m, B)
-    plt.show()
 
 
 
 def parse():
-    df = pd.read_csv("lol_champions.csv", encoding="ANSI", delimiter=";", header=None)
+    df = pd.read_csv("lol_champions.csv", encoding="iso-8859-1", delimiter=";", header=None)
     # removed 142 since all of Udyrs data is missing, causing errors
     df.drop(142, inplace=True)
-    df.fillna(0, inplace=True)
+    df.fillna({"numeric_col": 0, "string_col": ""}, inplace=True)
 
     data = df.values.tolist()
     return data
